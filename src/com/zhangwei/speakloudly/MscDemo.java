@@ -4,7 +4,7 @@
  * All rights reserved.
  *
  */
-package com.iflytek.abnfdemo;
+package com.zhangwei.speakloudly;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.iflytek.abnfdemo.R;
 import com.iflytek.speech.*;
 import com.iflytek.ui.RecognizerDialog;
 import com.iflytek.ui.RecognizerDialogListener;
