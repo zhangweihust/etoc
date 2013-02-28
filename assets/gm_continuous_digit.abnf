@@ -1,0 +1,9 @@
+#ABNF 1.0 gb2312;
+language zh-CN; 
+mode voice;
+
+root $main;
+$main = $place1 上网$place2 ;
+$place1 = 联通 | 联通3G | 移动 | 移动3G | 电信;
+$place2 = 真快 | 真慢 | 好贵 | 好便宜;
+
