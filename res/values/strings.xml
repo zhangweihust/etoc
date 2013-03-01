@@ -205,4 +205,8 @@
 		<item>华联控股</item>
 		<item>深南电</item>
 	</string-array>
+	<string name="next">下一步</string>
+	<string name="title">大声说</string>
+	<string name="text">凡联通3G用户都可在本终端上大声说“联通3G上网真快”，即可免费获赠20M流量，还犹豫什么快来抢吧！！</string>
+	<string name="phonenum_hint">请输入联通手机号</string>
 </resources>

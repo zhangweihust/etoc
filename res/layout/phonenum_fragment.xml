@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mWelcomeView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/welcome_background"
+    android:focusable="false" >
+
+    <ImageView
+        android:id="@+id/unicom_logo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/unicom_logo" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_centerHorizontal="true"  
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/unicom_logo"
+        android:layout_marginLeft="5dip"
+        android:text="@string/title"
+        android:textColor="@color/darkblue"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_marginLeft="5dip"
+        android:text="@string/text"
+        android:textColor="@color/darkblue"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/phonenum"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_above="@+id/next"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/btn_shape_white_rec"
+        android:drawableLeft = "@drawable/phone86"
+        android:drawablePadding="10dip"
+        android:hint = "@string/phonenum_hint"
+        android:inputType="phone"
+        android:maxLength="4"
+        android:paddingLeft="10dip"
+        android:textColor="@color/gray"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/next"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etoc_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/next"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/etoc_logo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/etoc_logo" />
+
+</RelativeLayout>

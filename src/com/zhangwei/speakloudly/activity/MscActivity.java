@@ -4,7 +4,7 @@
  * All rights reserved.
  *
  */
-package com.zhangwei.speakloudly;
+package com.zhangwei.speakloudly.activity;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,15 +19,15 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.iflytek.abnfdemo.R;
 import com.iflytek.speech.*;
 import com.iflytek.ui.RecognizerDialog;
 import com.iflytek.ui.RecognizerDialogListener;
+import com.zhangwei.speakloudly.R;
 
 /**
- * @author iflytek
+ * @author zhangwei
  */
-public class MscDemo extends Activity implements OnClickListener {
+public class MscActivity extends Activity implements OnClickListener {
 	
 	private final String APP_ID = "512c57b1";//orig:4d6774d0 my 512c57b1s
 	private final static String KEY_GRAMMAR_ID = "grammar_id";
@@ -200,7 +200,7 @@ public class MscDemo extends Activity implements OnClickListener {
 		public void onData(byte[] arg0) {
 			grammarID = new String(arg0);
 			// 保存语法ID
-			SharedPreferences preference = MscDemo.this.getSharedPreferences("abnf",MODE_PRIVATE);
+			SharedPreferences preference = MscActivity.this.getSharedPreferences("abnf",MODE_PRIVATE);
 			preference.edit().putString(KEY_GRAMMAR_ID,grammarID).commit();
 			
 			mToast.setText("语法文件ID：" + grammarID);
