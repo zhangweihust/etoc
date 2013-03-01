@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:gravity="center_horizontal"
-	android:padding="10dip">
-	<EditText android:id="@+id/edit_text" 
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:gravity="top|left"
-		android:textSize="20sp" 
-		android:minLines="12" 
-		android:maxLines="12" />
-	<LinearLayout android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:orientation="horizontal"
-		android:layout_marginTop="10dip"
-		android:gravity="center_horizontal">
-		<Button android:id="@+id/btn_recognize"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="20dip" 
-			android:layout_weight="1" 
-			android:text="直接识别语法" 
-			android:textSize="20sp"/>
-	</LinearLayout>
-	<LinearLayout android:layout_width="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/welcome_background" >
+
+    <TextView
+        android:id="@+id/speak_text"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:maxLines="12"
+        android:minLines="12"
+        android:text="@string/title"
+        android:textColor="@color/darkblue"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_begin_recognize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speak_text"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginTop="20dp"
+        android:drawableTop="@drawable/mic_pic"
+        android:drawablePadding="10dip"
+        android:gravity="center"
+        android:text="@string/begin_recognize"
+        android:textSize="20sp" />
+    <!--
+    <LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"
 		android:gravity="center_horizontal">
@@ -49,4 +56,6 @@
 			android:layout_weight="1" 
 			android:textSize="20sp" />	
 	</LinearLayout>
-</LinearLayout>
+    -->
+
+</RelativeLayout>

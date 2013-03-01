@@ -56,6 +56,8 @@ public class PhoneNumFragment  extends Fragment {
 		typeFace1 = Typeface.createFromAsset(mActivity.getAssets(), "font/HelveticaNeue-Roman.otf");
 */
 		mEdit = (EditText)view.findViewById(R.id.phonenum);
+		mError = (TextView)view.findViewById(R.id.error);
+		mNext = (Button)view.findViewById(R.id.next);
 		
 		return view;
 	}

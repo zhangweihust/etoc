@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mWelcomeView"
+    android:id="@+id/mphonenumfrag"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/welcome_background"
     android:focusable="false" >
 
-    <ImageView
+<!--     <ImageView
         android:id="@+id/unicom_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@drawable/unicom_logo" />
+        android:src="@drawable/unicom_logo" /> -->
 
     <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/unicom_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="5dip"
         android:gravity="center"
@@ -41,7 +40,7 @@
         android:id="@+id/phonenum"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_above="@+id/error"
+        android:layout_below="@+id/text"
         android:layout_centerInParent="true"
 
         android:layout_marginLeft="10dp"
@@ -61,7 +60,7 @@
         android:id="@+id/error"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_above="@+id/next"
+        android:layout_below="@+id/phonenum"
         android:layout_centerInParent="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -75,7 +74,7 @@
         android:id="@+id/next"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/etoc_logo"
+        android:layout_below="@+id/error"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:layout_marginTop="20dp"
@@ -84,13 +83,13 @@
         android:textSize="18sp"
         android:visibility="visible" />
 
-    <ImageView
+<!--     <ImageView
         android:id="@+id/etoc_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@drawable/etoc_logo" />
+        android:src="@drawable/etoc_logo" /> -->
 
 </RelativeLayout>

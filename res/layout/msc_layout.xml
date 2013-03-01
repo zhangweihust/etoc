@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/msc_Layout"
-    android:orientation="horizontal"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-  <FrameLayout
-    android:id="@+id/msc_container"
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
-  />
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/unicom_logo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/unicom_logo" />
+
+    <FrameLayout
+        android:id="@+id/msc_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/unicom_logo" />
+
+    <ImageView
+        android:id="@+id/etoc_logo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/etoc_logo" />
 
 </RelativeLayout>
