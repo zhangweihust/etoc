@@ -9,10 +9,14 @@ package com.zhangwei.speakloudly.activity;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,11 +27,14 @@ import com.iflytek.speech.*;
 import com.iflytek.ui.RecognizerDialog;
 import com.iflytek.ui.RecognizerDialogListener;
 import com.zhangwei.speakloudly.R;
+import com.zhangwei.speakloudly.fragment.PhoneNumFragment;
+import com.zhangwei.speakloudly.fragment.SpeakFragment;
+import com.zhangwei.speakloudly.utils.RuntimeLog;
 
 /**
  * @author zhangwei
  */
-public class MscActivity extends Activity implements OnClickListener {
+public class MscActivity extends FragmentActivity implements OnClickListener {
 	
 	private final String APP_ID = "512c57b1";//orig:4d6774d0 my 512c57b1s
 	private final static String KEY_GRAMMAR_ID = "grammar_id";
@@ -36,14 +43,25 @@ public class MscActivity extends Activity implements OnClickListener {
 	private String grammarID = null;
 	private Toast mToast;
 	
+	private FragmentManager fm ;
+	private SpeakFragment spkFrag;
+	private PhoneNumFragment phoneFrag;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.main);
+		setContentView(R.layout.msc_layout);
+		
 		mToast = Toast.makeText(this,"",Toast.LENGTH_LONG);
+		
+		
 		recognizerDialog = new RecognizerDialog(this,"appid="+APP_ID);
 		SpeechUser.getUser().login(this, null, null, "appid="+APP_ID, loginListener);
+		
+		spkFrag = new SpeakFragment();
+		phoneFrag = new PhoneNumFragment();
+		fm = getSupportFragmentManager();
 		
 		// 读取保存的语法ID
 		SharedPreferences preference = this.getSharedPreferences("abnf",MODE_PRIVATE);
@@ -58,6 +76,23 @@ public class MscActivity extends Activity implements OnClickListener {
 		findViewById(R.id.btn_recognize).setOnClickListener(this);
 		findViewById(R.id.btn_upload).setOnClickListener(this);
 		findViewById(R.id.btn_recognizeGrammar).setOnClickListener(this);
+		
+		
+        FragmentTransaction ft = fm.beginTransaction(); 
+
+		//check login_container if null
+        if (fm.findFragmentById(R.id.msc_container) != null) {
+        	RuntimeLog.log("replace login_container dst:" + phoneFrag.toString());
+        	ft.replace(R.id.msc_container, phoneFrag);
+
+        }else{
+        	RuntimeLog.log("add login_container dst:" + phoneFrag.toString());
+			ft.add(R.id.msc_container, phoneFrag);
+			//ft.replace(R.id.login_container, dst);
+        }
+
+        
+        ft.commit();
 	} 
 	
 	@Override
