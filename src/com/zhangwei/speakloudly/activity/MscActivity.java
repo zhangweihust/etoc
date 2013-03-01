@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,6 +36,10 @@ import com.zhangwei.speakloudly.utils.RuntimeLog;
  * @author zhangwei
  */
 public class MscActivity extends FragmentActivity implements OnClickListener {
+	
+	public  final int PHONE_NUM_VIEW = 0; // to welcome 
+	public  final int SPEAK_LOUDLY_VIEW = 1 ; //  
+
 	
 	private final String APP_ID = "512c57b1";//orig:4d6774d0 my 512c57b1s
 	private final static String KEY_GRAMMAR_ID = "grammar_id";
@@ -77,23 +82,53 @@ public class MscActivity extends FragmentActivity implements OnClickListener {
 		findViewById(R.id.btn_upload).setOnClickListener(this);
 		findViewById(R.id.btn_recognizeGrammar).setOnClickListener(this);
 		
+		goToPage(PHONE_NUM_VIEW, false);
+	} 
+	
+	public void goToPage(int type, boolean record){
+		Fragment dst;
+		String mViewName;
+		dst = phoneFrag;
+		if(type == PHONE_NUM_VIEW){
+			
+			dst = phoneFrag;
+			mViewName = "phoneNum";
+			
+		}else if(type == SPEAK_LOUDLY_VIEW){
+			
+			dst = spkFrag;
+			mViewName = "speakloudly";
+			
+		}else {
+			
+			dst = phoneFrag;
+			mViewName = "phoneNum";
+			RuntimeLog.log("type is not supported yet, just use phoneNum! type:" + type);
+		}
+
 		
         FragmentTransaction ft = fm.beginTransaction(); 
 
 		//check login_container if null
         if (fm.findFragmentById(R.id.msc_container) != null) {
-        	RuntimeLog.log("replace login_container dst:" + phoneFrag.toString());
-        	ft.replace(R.id.msc_container, phoneFrag);
+        	RuntimeLog.log("replace login_container dst:" + dst.toString());
+        	ft.replace(R.id.msc_container, dst);
 
         }else{
-        	RuntimeLog.log("add login_container dst:" + phoneFrag.toString());
-			ft.add(R.id.msc_container, phoneFrag);
+        	RuntimeLog.log("add login_container dst:" + dst.toString());
+			ft.add(R.id.msc_container, dst);
 			//ft.replace(R.id.login_container, dst);
+        }
+        
+        if(record){
+        	ft.addToBackStack(null);
         }
 
         
         ft.commit();
-	} 
+        //ft.commitAllowingStateLoss();
+        
+	}
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -245,5 +280,8 @@ public class MscActivity extends FragmentActivity implements OnClickListener {
 		@Override
 		public void onEvent(int arg0, Bundle arg1) {
 		}
+		
+		
+		
 	};
 }

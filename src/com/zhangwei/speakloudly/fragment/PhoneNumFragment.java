@@ -16,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class PhoneNumFragment  extends Fragment {
 	MscActivity mActivity;
@@ -32,6 +34,9 @@ public class PhoneNumFragment  extends Fragment {
 	private Button welcomeAcceptBtn;
 	private RelativeLayout mRelativeLayout;
 	private ImageView welcomeView; */
+	private EditText mEdit;
+	private TextView mError;
+	private Button mNext;
 
 	public PhoneNumFragment() {
 	}
@@ -46,12 +51,11 @@ public class PhoneNumFragment  extends Fragment {
 		// Create, or inflate the Fragment's UI, and return it.
 		// If this Fragment has no UI then return null.
 		View view =  inflater.inflate(R.layout.phonenum_fragment, container, false);
-		//view.setId(0x7F04FFF0);
+
 /*		typeFace = Typeface.createFromAsset(mActivity.getAssets(),"font/Edmondsans-Regular.otf");
 		typeFace1 = Typeface.createFromAsset(mActivity.getAssets(), "font/HelveticaNeue-Roman.otf");
-		mTermTextView = (Button)view.findViewById(R.id.mWelcomeTermOfUseImageView);
-		welcomeAcceptBtn =(Button)view.findViewById(R.id.mWelcomeAcceptBtn);
-		welcomeView = (ImageView)view.findViewById(R.id.login_welcome_image);*/
+*/
+		mEdit = (EditText)view.findViewById(R.id.phonenum);
 		
 		return view;
 	}

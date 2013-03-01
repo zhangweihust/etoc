@@ -17,12 +17,12 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_centerHorizontal="true"  
-        android:gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/unicom_logo"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="5dip"
+        android:gravity="center"
         android:text="@string/title"
         android:textColor="@color/darkblue"
         android:textSize="34sp" />
@@ -41,21 +41,35 @@
         android:id="@+id/phonenum"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_above="@+id/next"
+        android:layout_above="@+id/error"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="20dp"
+
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/btn_shape_white_rec"
-        android:drawableLeft = "@drawable/phone86"
+        android:drawableLeft="@drawable/phone86"
         android:drawablePadding="10dip"
-        android:hint = "@string/phonenum_hint"
+        android:hint="@string/phonenum_hint"
         android:inputType="phone"
         android:maxLength="4"
         android:paddingLeft="10dip"
         android:textColor="@color/gray"
         android:textSize="15sp" />
+<!--         android:visibility="gone|visible" -->
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_above="@+id/next"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:paddingLeft="10dip"
+        android:textColor="@color/red"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/next"
@@ -64,6 +78,7 @@
         android:layout_above="@+id/etoc_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
+        android:layout_marginTop="20dp"
         android:text="@string/next"
         android:textColor="@color/white"
         android:textSize="18sp"
