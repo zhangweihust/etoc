@@ -54,7 +54,7 @@
         android:inputType="phone"
         android:maxLength="11"
         android:paddingLeft="10dip"
-        android:textColor="@color/gray"
+        android:textColor="@color/red"
         android:textSize="15sp" />
 <!--         android:visibility="gone|visible" -->
     <TextView
@@ -68,19 +68,20 @@
         android:layout_marginTop="10dp"
         android:visibility="gone"
         android:paddingLeft="10dip"
-        android:textColor="@color/red"
-        android:textSize="20sp" />
+        android:textColor="@color/gray"
+        android:textSize="15sp" />
 
     <Button
         android:id="@+id/next"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/error"
+        android:background="@drawable/btn_shape_white_rec"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:layout_marginTop="20dp"
         android:text="@string/next"
-        android:textColor="@color/white"
+        android:textColor="@color/gray"
         android:textSize="18sp"
         android:visibility="visible" />
 

@@ -15,6 +15,7 @@ import android.app.Activity;
 //import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,6 @@ public class PhoneNumFragment  extends Fragment {
 		mEdit = (EditText)view.findViewById(R.id.phonenum);
 		mError = (TextView)view.findViewById(R.id.error);
 		mNext = (Button)view.findViewById(R.id.next);
-		verifyingPhoneNumberAnimation = (AnimationDrawable)mNext.getBackground();
 		
 		return view;
 	}
@@ -68,8 +68,11 @@ public class PhoneNumFragment  extends Fragment {
 					//seems ok, then verify phone number through unicom server
 					mActivity.mHandler.sendEmptyMessage(MscActivity.VERIFYING_PHONENUM);
 					
-					//set the pull pin time out event					
-					mActivity.mHandler.sendEmptyMessageDelayed(MscActivity.PHONENUM_TIMEOUT, MscActivity.TIMEOUT_DELAY);
+					//set the pull pin time out event
+					Message msg = new Message();
+					msg.what = MscActivity.STOP_VFY_PHONENUM;
+					msg.obj = "timeout";
+					mActivity.mHandler.sendMessageDelayed(msg, MscActivity.TIMEOUT_DELAY);
 					
 					UnicomClient.performVerfiyNum(null, mActivity.mHandler, new Callback(){
 						public void call(ResponseWrapper resp) {
@@ -80,11 +83,16 @@ public class PhoneNumFragment  extends Fragment {
 									if(errMsg!=null){
 										unLockInput(errMsg);
 									}else{
-										mActivity.mHandler.removeMessages(MscActivity.PHONENUM_TIMEOUT);
+										mActivity.mHandler.removeMessages(MscActivity.STOP_VFY_PHONENUM);
 										mActivity.goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
 									}
 								}else{
-									unLockInput(null);
+									mActivity.mHandler.removeMessages(MscActivity.STOP_VFY_PHONENUM);
+									Message msg = new Message();
+									msg.what = MscActivity.STOP_VFY_PHONENUM;
+									msg.obj = "error";
+									mActivity.mHandler.sendMessageDelayed(msg, MscActivity.RUNTIME_DELAY);
+									//unLockInput(null);
 								}
 							
 						}
@@ -116,11 +124,12 @@ public class PhoneNumFragment  extends Fragment {
 
 
 	
-	public void lockInput(){
+	public void LockInput(){
+		RuntimeLog.log("PhoneNumFragment - LockInput - IN");
 		mNext.setText("");
 		mNext.setClickable(false);			
 		mNext.setBackgroundResource(R.anim.verifying_phonenumber);
-		
+		verifyingPhoneNumberAnimation = (AnimationDrawable)mNext.getBackground();
 		verifyingPhoneNumberAnimation.start();
 		
 		mError.setVisibility(View.GONE);
@@ -128,9 +137,13 @@ public class PhoneNumFragment  extends Fragment {
 	}
 	
 	public void unLockInput(String errMsg){
-		if (verifyingPhoneNumberAnimation.isRunning()){
+		RuntimeLog.log("PhoneNumFragment - unLockInput - IN, errMsg:" + errMsg);
+		if ((verifyingPhoneNumberAnimation!=null) && verifyingPhoneNumberAnimation.isRunning()){
 			verifyingPhoneNumberAnimation.stop();
 		}
+		mNext.setText(R.string.next);
+		mNext.setClickable(true);
+		mNext.setBackgroundResource(R.drawable.btn_shape_white_rec);
 		
 		if(errMsg!=null){
 			mError.setText(errMsg);

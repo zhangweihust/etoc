@@ -52,12 +52,13 @@ public class MscActivity extends FragmentActivity {
 	public static final int IFLY_TIMEOUT = 3;
 	
 	public static final int VERIFYING_PHONENUM = 4;
-	public static final int PHONENUM_TIMEOUT = 5;
+	public static final int STOP_VFY_PHONENUM = 5;
 	
 	public static final int PAYING_PHONENUM = 6;
 	public static final int PAYING_TIMEOUT = 7;
 	
 	public static final int TIMEOUT_DELAY = 60*1000;
+	public static final int RUNTIME_DELAY = 10000;
 
 	private Toast mToast;
 
@@ -92,11 +93,23 @@ public class MscActivity extends FragmentActivity {
 			RuntimeLog.log("handleMessage - msg.what:" + msg.what);
 			switch (msg.what) {
 				case LOGINING_UNICOM:
-					theActivity.phoneFrag.lockInput();
+					
+					break;
+				case UNICOM_TIMEOUT:
+					
 					break;
 				case LOGINING_IFLY:
 					break;
 				case VERIFYING_PHONENUM:
+					theActivity.phoneFrag.LockInput();
+					break;
+				case STOP_VFY_PHONENUM:
+					if((String)(msg.obj)=="error"){
+						theActivity.phoneFrag.unLockInput("手机号校验错误");
+					}else{
+						theActivity.phoneFrag.unLockInput("手机号校验超时");
+					}
+					
 					break;
 				case PAYING_PHONENUM:
 					break;
