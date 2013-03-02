@@ -35,8 +35,8 @@ import com.zhangwei.speakloudly.utils.RuntimeLog;
  */
 public class MscActivity extends FragmentActivity {
 
-	public final int PHONE_NUM_VIEW = 0; // to welcome
-	public final int SPEAK_LOUDLY_VIEW = 1; //
+	public final static int PHONE_NUM_VIEW = 0; // to welcome
+	public final static int SPEAK_LOUDLY_VIEW = 1; //
 
 	private Toast mToast;
 
