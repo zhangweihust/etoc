@@ -4,7 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/welcome_background"
-    android:focusable="false" >
+    android:orientation="vertical"
+    android:focusable="false">
 
 <!--     <ImageView
         android:id="@+id/unicom_logo"
@@ -51,7 +52,7 @@
         android:drawablePadding="10dip"
         android:hint="@string/phonenum_hint"
         android:inputType="phone"
-        android:maxLength="4"
+        android:maxLength="11"
         android:paddingLeft="10dip"
         android:textColor="@color/gray"
         android:textSize="15sp" />

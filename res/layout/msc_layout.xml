@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhangwei.speakloudly.widget.MscLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/msc_Layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal" 
+    android:background="@color/welcome_background">
 
     <ImageView
         android:id="@+id/unicom_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
         android:src="@drawable/unicom_logo" />
 
     <FrameLayout
         android:id="@+id/msc_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/unicom_logo" />
+        android:layout_below="@+id/unicom_logo" 
+        android:layout_above="@+id/etoc_logo" 
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
 
     <ImageView
         android:id="@+id/etoc_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+               android:scaleType="fitXY"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
         android:src="@drawable/etoc_logo" />
 
-</RelativeLayout>
+</com.zhangwei.speakloudly.widget.MscLayout>
