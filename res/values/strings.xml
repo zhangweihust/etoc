@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">语法识别示例</string>
+	<string name="app_name">大声说</string>
 	<string-array
 		name="stocks">
 		<item>阿里山龙胆</item>
