@@ -7,12 +7,16 @@
 package com.zhangwei.speakloudly.activity;
 
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhangwei.speakloudly.R;
+import com.zhangwei.speakloudly.client.ResponseWrapper;
 import com.zhangwei.speakloudly.fragment.PhoneNumFragment;
 import com.zhangwei.speakloudly.fragment.SpeakFragment;
 import com.zhangwei.speakloudly.utils.RuntimeLog;
@@ -35,14 +40,73 @@ import com.zhangwei.speakloudly.utils.RuntimeLog;
  */
 public class MscActivity extends FragmentActivity {
 
+	// fragment types:
 	public final static int PHONE_NUM_VIEW = 0; // to welcome
 	public final static int SPEAK_LOUDLY_VIEW = 1; //
+
+	// handler status:
+	public static final int LOGINING_UNICOM = 0;
+	public static final int UNICOM_TIMEOUT = 1;
+	
+	public static final int LOGINING_IFLY = 2;
+	public static final int IFLY_TIMEOUT = 3;
+	
+	public static final int VERIFYING_PHONENUM = 4;
+	public static final int PHONENUM_TIMEOUT = 5;
+	
+	public static final int PAYING_PHONENUM = 6;
+	public static final int PAYING_TIMEOUT = 7;
+	
+	public static final int TIMEOUT_DELAY = 60*1000;
 
 	private Toast mToast;
 
 	private FragmentManager fm;
 	private SpeakFragment spkFrag;
 	private PhoneNumFragment phoneFrag;
+
+	public MyHandler mHandler;
+
+	/**
+	 * @author zhangwei This Handler class should be static or leaks might occur
+	 */
+
+	public static class MyHandler extends Handler {
+
+		WeakReference<MscActivity> wActivity;
+
+		MyHandler(MscActivity activity) {
+			wActivity = new WeakReference<MscActivity>(activity);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			MscActivity theActivity = wActivity.get();
+
+			if (theActivity == null) {
+				RuntimeLog.log("handleMessage - theActivity null");
+				return;
+			}
+
+			// super.handleMessage(msg);
+			RuntimeLog.log("handleMessage - msg.what:" + msg.what);
+			switch (msg.what) {
+				case LOGINING_UNICOM:
+					theActivity.phoneFrag.lockInput();
+					break;
+				case LOGINING_IFLY:
+					break;
+				case VERIFYING_PHONENUM:
+					break;
+				case PAYING_PHONENUM:
+					break;
+	            default:
+	            	RuntimeLog.log("case default - msg.what:" + msg.what);
+	            	break;
+			}
+
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +117,8 @@ public class MscActivity extends FragmentActivity {
 		spkFrag = new SpeakFragment();
 		phoneFrag = new PhoneNumFragment();
 		fm = getSupportFragmentManager();
+		
+		mHandler = new MyHandler(this);
 
 		goToPage(PHONE_NUM_VIEW, false);
 	}
@@ -106,5 +172,10 @@ public class MscActivity extends FragmentActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
-
+	
+	public void handleNetworkError(ResponseWrapper resp){
+		if(resp==null){
+			Toast.makeText(this,"Network Problem!", Toast.LENGTH_LONG).show();
+		}
+	}
 }

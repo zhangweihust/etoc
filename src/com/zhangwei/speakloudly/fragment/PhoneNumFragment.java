@@ -5,38 +5,29 @@ import java.util.regex.Pattern;
 
 import com.zhangwei.speakloudly.R;
 import com.zhangwei.speakloudly.activity.MscActivity;
+import com.zhangwei.speakloudly.client.Callback;
+import com.zhangwei.speakloudly.client.ResponseWrapper;
+import com.zhangwei.speakloudly.client.UnicomClient;
+import com.zhangwei.speakloudly.client.ServerSideErrorMsg;
 import com.zhangwei.speakloudly.utils.RuntimeLog;
 
 import android.app.Activity;
 //import android.app.Fragment;
-import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PhoneNumFragment  extends Fragment {
 	MscActivity mActivity;
-	//OnGotoPageListener onGotoPageListener;
 	
 	//UI components
-/*	private String airtelNumber;
-	private AnimationDrawable loadingAnimation;
-	Typeface typeFace; 
-	Typeface typeFace1;
-	private Button mTermTextView;
-	private Button welcomeAcceptBtn;
-	private RelativeLayout mRelativeLayout;
-	private ImageView welcomeView; */
 	private EditText mEdit;
 	private TextView mError;
 	private Button mNext;
@@ -56,12 +47,10 @@ public class PhoneNumFragment  extends Fragment {
 		// If this Fragment has no UI then return null.
 		View view =  inflater.inflate(R.layout.phonenum_fragment, container, false);
 
-/*		typeFace = Typeface.createFromAsset(mActivity.getAssets(),"font/Edmondsans-Regular.otf");
-		typeFace1 = Typeface.createFromAsset(mActivity.getAssets(), "font/HelveticaNeue-Roman.otf");
-*/
 		mEdit = (EditText)view.findViewById(R.id.phonenum);
 		mError = (TextView)view.findViewById(R.id.error);
 		mNext = (Button)view.findViewById(R.id.next);
+		verifyingPhoneNumberAnimation = (AnimationDrawable)mNext.getBackground();
 		
 		return view;
 	}
@@ -74,40 +63,41 @@ public class PhoneNumFragment  extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// mSpeakText.setText(text);
-				lockInput();
-/*				if(validateNumber(phonenumber)){
+				String phoneNum = mEdit.getText().toString();
+				if(validateNumber(phoneNum)){
+					//seems ok, then verify phone number through unicom server
+					mActivity.mHandler.sendEmptyMessage(MscActivity.VERIFYING_PHONENUM);
 					
-				}*/
-				mActivity.goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+					//set the pull pin time out event					
+					mActivity.mHandler.sendEmptyMessageDelayed(MscActivity.PHONENUM_TIMEOUT, MscActivity.TIMEOUT_DELAY);
+					
+					UnicomClient.performVerfiyNum(null, mActivity.mHandler, new Callback(){
+						public void call(ResponseWrapper resp) {
+							
+								mActivity.handleNetworkError(resp);
+								if(resp!=null && resp.isValid() && resp.isNoError()){
+									String errMsg = ServerSideErrorMsg.getMsg(resp.getStatus());
+									if(errMsg!=null){
+										unLockInput(errMsg);
+									}else{
+										mActivity.mHandler.removeMessages(MscActivity.PHONENUM_TIMEOUT);
+										mActivity.goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+									}
+								}else{
+									unLockInput(null);
+								}
+							
+						}
+					});
+					
+				}else{
+					unLockInput(phoneNum + "不是一个正确的手机号码");
+				}
+				
 			}
 		});
-/*		welcomeAcceptBtn.setTypeface(typeFace1);
-		
-		mTermTextView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-				mActivity.goToPage(mActivity.LOGIN_VIEW_TERMOFSERVICE, true);
-				
-			}
-		});
-	
-		welcomeAcceptBtn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				lockInput();
-				mActivity.checkUser();
-
-			}
-		});*/
 	}
 
-/*	@Override
-	public void onSaveInstanceState(Bundle outState) {
-	    //No call for super(). Bug on API Level > 11.
-	}*/
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -126,16 +116,11 @@ public class PhoneNumFragment  extends Fragment {
 
 
 	
-	private void lockInput(){
-/*		welcomeAcceptBtn.setText("");
-		welcomeAcceptBtn.setClickable(false);			
-		welcomeAcceptBtn.setBackgroundResource(R.anim.welcome_loading_process);
-		loadingAnimation = (AnimationDrawable)welcomeAcceptBtn.getBackground();
-		loadingAnimation.start();*/
+	public void lockInput(){
 		mNext.setText("");
 		mNext.setClickable(false);			
 		mNext.setBackgroundResource(R.anim.verifying_phonenumber);
-		verifyingPhoneNumberAnimation = (AnimationDrawable)mNext.getBackground();
+		
 		verifyingPhoneNumberAnimation.start();
 		
 		mError.setVisibility(View.GONE);
@@ -155,13 +140,6 @@ public class PhoneNumFragment  extends Fragment {
 		
 	}
 	
-	public void showBtns(String airtelNumber){
-/*		this.airtelNumber = airtelNumber;*/
-		//final Button signUpBtn =(Button)findViewById(R.id.mWelcomeSignUpBtn);
-		//final Button signInBtn =(Button)findViewById(R.id.mWelcomeSignInBtn);
-		//signUpBtn.setVisibility(View.VISIBLE);
-		//signInBtn.setVisibility(View.VISIBLE);
-	}
 	
 	private boolean validateNumber(String number){
     	//Pattern pattern=Pattern.compile("(^\\+91\\d{10}$|^0091\\d{10}$|^0\\d{10}$|^\\d{10}$)");
@@ -169,12 +147,10 @@ public class PhoneNumFragment  extends Fragment {
     	Pattern pattern=Pattern.compile("(^13\\d{9}$|^15\\d{9}$|^16\\d{9}$|^18\\d{9}$)");
 		Matcher matcher=pattern.matcher(number);
 		if(!matcher.find()){
-			//return "Your phone number should be 10-14 digits long, only numbers and \"+\".";
-			return false; //"Your phone number should be 10 digits long, only numbers.";
+			return false; 
 		}
 		return true;
 	}
-	
-	
+
 
 }

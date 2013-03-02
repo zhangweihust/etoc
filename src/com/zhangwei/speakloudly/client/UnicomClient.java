@@ -36,10 +36,10 @@ import android.util.Log;
 
 public class UnicomClient {
 	private static final String UNICOM_URL = "http://www.unicom.example/";
-    private static final String VFY_PHONENUM_URL = UNICOM_URL + "verify";
-    private static final String PAY_PHONENUM_URL = UNICOM_URL + "payment";
-    private static final String TAG = "UnicomClient";
-    
+	private static final String VFY_PHONENUM_URL = UNICOM_URL + "verify";
+	private static final String PAY_PHONENUM_URL = UNICOM_URL + "payment";
+	private static final String TAG = "UnicomClient";
+
 	private static Thread performOnBackgroundThread(final Runnable runnable) {
 		final Thread t = new Thread() {
 			@Override
@@ -53,17 +53,19 @@ public class UnicomClient {
 		t.start();
 		return t;
 	}
-	
-	private static ResponseWrapper sendGetRequest(String url, CookieStore reqCookieStore, List<Header> headers) {
-		Log.i(TAG, "sendGetRequest() begin url=" + url + ",reqCookieStore=" + reqCookieStore);
+
+	private static ResponseWrapper sendGetRequest(String url,
+			CookieStore reqCookieStore, List<Header> headers) {
+		Log.i(TAG, "sendGetRequest() begin url=" + url + ",reqCookieStore="
+				+ reqCookieStore);
 		HttpGet httpGet = new HttpGet(url);
-		if(headers!=null){
-			for(Header header:headers){
+		if (headers != null) {
+			for (Header header : headers) {
 				httpGet.addHeader(header);
 			}
 		}
 		DefaultHttpClient httpClient = newDefaultHttpClient();
-		if(reqCookieStore!=null){
+		if (reqCookieStore != null) {
 			httpClient.setCookieStore(reqCookieStore);
 		}
 		HttpResponse resp;
@@ -80,28 +82,33 @@ public class UnicomClient {
 		} finally {
 			httpClient.getConnectionManager().shutdown();
 		}
-		
+
 		int statusCode = resp.getStatusLine().getStatusCode();
 		Log.i(TAG, "sendGetRequest() statusCode=" + statusCode);
 		if (statusCode == HttpStatus.SC_OK) {
 			return new ResponseWrapper(resp, cookieStore);
-		}else{
+		} else {
 			return null;
 		}
 	}
-	private static ResponseWrapper sendPostRequest(String url, String[] paraKeys, String[] paraValues, CookieStore reqCookieStore, List<Header> headers) {
+
+	private static ResponseWrapper sendPostRequest(String url,
+			String[] paraKeys, String[] paraValues, CookieStore reqCookieStore,
+			List<Header> headers) {
 		Log.i(TAG, "sendPostRequest() begin, url=" + url);
 		HttpPost httpPost = new HttpPost(url);
-		if(headers!=null){
-			for(Header header:headers){
+		if (headers != null) {
+			for (Header header : headers) {
 				httpPost.addHeader(header);
 			}
 		}
-		if(paraKeys!=null && paraKeys.length>0 && paraValues!=null && paraValues.length>0){
+		if (paraKeys != null && paraKeys.length > 0 && paraValues != null
+				&& paraValues.length > 0) {
 			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 			int paraLen = paraKeys.length;
 			for (int i = 0; i < paraLen; i++) {
-				Log.i(TAG, "sendPostRequest() " + paraKeys[i] + "=" + paraValues[i]);
+				Log.i(TAG, "sendPostRequest() " + paraKeys[i] + "="
+						+ paraValues[i]);
 				params.add(new BasicNameValuePair(paraKeys[i], paraValues[i]));
 			}
 			HttpEntity entity = null;
@@ -113,11 +120,12 @@ public class UnicomClient {
 			}
 			httpPost.setEntity(entity);
 		}
-		
+
 		DefaultHttpClient httpClient = newDefaultHttpClient();
-		if(reqCookieStore!=null){
+		if (reqCookieStore != null) {
 			httpClient.setCookieStore(reqCookieStore);
 		}
+
 		HttpResponse resp;
 		CookieStore respCookieStore;
 		try {
@@ -130,18 +138,19 @@ public class UnicomClient {
 			Log.e(TAG, "", e);
 			return null;
 		} finally {
-			//httpClient.getConnectionManager().shutdown();
+			// httpClient.getConnectionManager().shutdown();
 		}
-		
+
 		int statusCode = resp.getStatusLine().getStatusCode();
 		Log.i(TAG, "sendPostRequest() statusCode=" + statusCode);
 		if (statusCode == HttpStatus.SC_OK) {
 			return new ResponseWrapper(resp, respCookieStore);
-		}else{
+		} else {
 			return null;
 		}
 	}
-	private static DefaultHttpClient newDefaultHttpClient(){
+
+	private static DefaultHttpClient newDefaultHttpClient() {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpParams params = httpClient.getParams();
 		ConnManagerParams.setTimeout(params, 1000);
@@ -149,29 +158,36 @@ public class UnicomClient {
 		HttpConnectionParams.setSoTimeout(params, 30000);
 		params.setBooleanParameter("http.protocol.expect-continue", false);
 		BasicCredentialsProvider bcp = new BasicCredentialsProvider();
-        bcp.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(
-        		Constants.CREDENTIALS_USER_NAME, Constants.CREDENTIALS_PASSWORD));
-        httpClient.setCredentialsProvider(bcp);
-        HttpClientParams.setCookiePolicy(httpClient.getParams(), CookiePolicy.BROWSER_COMPATIBILITY);
+		bcp.setCredentials(AuthScope.ANY,
+				new UsernamePasswordCredentials(
+						Constants.CREDENTIALS_USER_NAME,
+						Constants.CREDENTIALS_PASSWORD));
+		httpClient.setCredentialsProvider(bcp);
+		HttpClientParams.setCookiePolicy(httpClient.getParams(),
+				CookiePolicy.BROWSER_COMPATIBILITY);
 		return httpClient;
 	}
-	private static Header genPassportCookieHeader(String passport){
-		Header header = new BasicHeader("Cookie",CookieUtil.crossCookieName("passport") + "=\"" + passport + "\"");
+
+	private static Header genPassportCookieHeader(String passport) {
+		Header header = new BasicHeader("Cookie",
+				CookieUtil.crossCookieName("passport") + "=\"" + passport
+						+ "\"");
 		return header;
 	}
 
-    
-	public static Thread performVerfiyNum(final String passport, final Handler handler, final Callback callback) {
+	public static Thread performVerfiyNum(final String passport,
+			final Handler handler, final Callback callback) {
 		return performOnBackgroundThread(new Runnable() {
 			public void run() {
 				List<Header> headers = new ArrayList<Header>();
-				if(passport!=null && !passport.equals("")){
+				if (passport != null && !passport.equals("")) {
 					headers.add(genPassportCookieHeader(passport));
 				}
-				
-				final ResponseWrapper resp = sendGetRequest(VFY_PHONENUM_URL, null, headers);
-				
-				if(handler!=null){
+
+				final ResponseWrapper resp = sendGetRequest(VFY_PHONENUM_URL,
+						null, headers);
+
+				if (handler != null) {
 					handler.post(new Runnable() {
 						public void run() {
 							callback.call(resp);
@@ -181,18 +197,20 @@ public class UnicomClient {
 			}
 		});
 	}
-	
-	public static Thread performPayment(final String passport, final Handler handler, final Callback callback) {
+
+	public static Thread performPayment(final String passport,
+			final Handler handler, final Callback callback) {
 		return performOnBackgroundThread(new Runnable() {
 			public void run() {
 				List<Header> headers = new ArrayList<Header>();
-				if(passport!=null && !passport.equals("")){
+				if (passport != null && !passport.equals("")) {
 					headers.add(genPassportCookieHeader(passport));
 				}
-				
-				final ResponseWrapper resp = sendGetRequest(PAY_PHONENUM_URL, null, headers);
-				
-				if(handler!=null){
+
+				final ResponseWrapper resp = sendGetRequest(PAY_PHONENUM_URL,
+						null, headers);
+
+				if (handler != null) {
 					handler.post(new Runnable() {
 						public void run() {
 							callback.call(resp);
