@@ -59,65 +59,7 @@ public class PhoneNumFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		RuntimeLog.log("PhoneNumFragment - onActivityCreated");
-		mNext.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// mSpeakText.setText(text);
-				String phoneNum = mEdit.getText().toString();
-				if (validateNumber(phoneNum)) {
-					// seems ok, then verify phone number through unicom server
-					mActivity.mHandler
-							.sendEmptyMessage(MscActivity.VERIFYING_PHONENUM);
-
-					// set the pull pin time out event
-					Message msg = new Message();
-					msg.what = MscActivity.STOP_VFY_PHONENUM;
-					msg.obj = "timeout";
-					mActivity.mHandler.sendMessageDelayed(msg,
-							MscActivity.TIMEOUT_DELAY);
-
-					UnicomClient.performVerfiyNum(null, mActivity.mHandler,
-							new Callback() {
-								public void call(ResponseWrapper resp) {
-
-									mActivity.handleNetworkError(resp);
-									// if(resp!=null && resp.isValid() &&
-									// resp.isNoError()){
-									if (true) {
-
-										mActivity.mHandler
-												.removeMessages(MscActivity.STOP_VFY_PHONENUM);
-										mActivity.goToPage(
-												MscActivity.SPEAK_LOUDLY_VIEW,
-												true);
-
-									} else {
-										if (resp != null) {
-											String errMsg = ServerSideErrorMsg
-													.getMsg(resp.getStatus());
-											if (errMsg != null) {
-												unLockInput(errMsg);
-											}
-										}
-										mActivity.mHandler
-												.removeMessages(MscActivity.STOP_VFY_PHONENUM);
-										Message msg = new Message();
-										msg.what = MscActivity.STOP_VFY_PHONENUM;
-										msg.obj = "error";
-										mActivity.mHandler.sendMessageDelayed(
-												msg, MscActivity.RUNTIME_DELAY);
-										// unLockInput(null);
-									}
-
-								}
-							});
-
-				} else {
-					unLockInput(phoneNum + "不是一个正确的手机号码");
-				}
-
-			}
-		});
+/*		mNext.setOnClickListener(new OnClickListener() {});*/
 	}
 
 	@Override
@@ -133,6 +75,66 @@ public class PhoneNumFragment extends Fragment {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnGotoPageListener");
 		}
+	}
+	
+	public void onNext(View view){
+
+		// mSpeakText.setText(text);
+		String phoneNum = mEdit.getText().toString();
+		if (validateNumber(phoneNum)) {
+			// seems ok, then verify phone number through unicom server
+			mActivity.mHandler
+					.sendEmptyMessage(MscActivity.VERIFYING_PHONENUM);
+
+			// set the pull pin time out event
+			Message msg = new Message();
+			msg.what = MscActivity.STOP_VFY_PHONENUM;
+			msg.obj = "timeout";
+			mActivity.mHandler.sendMessageDelayed(msg,
+					MscActivity.TIMEOUT_DELAY);
+
+			UnicomClient.performVerfiyNum(null, mActivity.mHandler,
+					new Callback() {
+						public void call(ResponseWrapper resp) {
+
+							mActivity.handleNetworkError(resp);
+							// if(resp!=null && resp.isValid() &&
+							// resp.isNoError()){
+							if (true) {
+
+								mActivity.mHandler
+										.removeMessages(MscActivity.STOP_VFY_PHONENUM);
+								mActivity.goToPage(
+										MscActivity.SPEAK_LOUDLY_VIEW,
+										true);
+
+							} else {
+								if (resp != null) {
+									String errMsg = ServerSideErrorMsg
+											.getMsg(resp.getStatus());
+									if (errMsg != null) {
+										unLockInput(errMsg);
+									}
+								}
+								mActivity.mHandler
+										.removeMessages(MscActivity.STOP_VFY_PHONENUM);
+								Message msg = new Message();
+								msg.what = MscActivity.STOP_VFY_PHONENUM;
+								msg.obj = "error";
+								mActivity.mHandler.sendMessageDelayed(
+										msg, MscActivity.RUNTIME_DELAY);
+								// unLockInput(null);
+							}
+
+						}
+					});
+
+		} else {
+			unLockInput(phoneNum + "不是一个正确的手机号码");
+		}
+
+	
+		
 	}
 
 	public void LockInput() {

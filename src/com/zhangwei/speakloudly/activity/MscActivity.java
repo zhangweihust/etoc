@@ -186,6 +186,13 @@ public class MscActivity extends FragmentActivity {
 		super.onConfigurationChanged(newConfig);
 	}
 	
+	public void onNext(View v){
+		if(phoneFrag!=null){
+			phoneFrag.onNext(v);
+		}
+		
+	}
+	
 	public void handleNetworkError(ResponseWrapper resp){
 		if(resp==null){
 			Toast.makeText(this,"Network Problem!", Toast.LENGTH_LONG).show();

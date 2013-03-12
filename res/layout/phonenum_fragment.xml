@@ -82,8 +82,23 @@
         android:layout_marginTop="20dp"
         android:text="@string/next"
         android:textColor="@color/gray"
-        android:textSize="18sp"
-        android:visibility="visible" />
+        android:textSize="20sp"
+        android:visibility="visible" 
+        android:onClick="onNext"/>
+    <Button
+        android:id="@+id/next2"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/next"
+        android:background="@drawable/btn_shape_white_rec"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/next"
+        android:textColor="@color/gray"
+        android:textSize="20sp"
+        android:visibility="invisible" 
+        android:onClick="onNext"/>
 
 <!--     <ImageView
         android:id="@+id/etoc_logo"
