@@ -26,7 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SpeakFragment extends Fragment {
-	MscActivity mActivity;
+	private Activity mActivity;
+	private SpeakFragmentNotify mSpeakFragmentNotify;
+	
 	private TextView mSpeakText;
 	private Button mBeginRecognize;
 	private Toast mToast;
@@ -39,6 +41,11 @@ public class SpeakFragment extends Fragment {
 	private SpeechListener loginListener;
 	private RecognizerDialogListener mRecoListener;
 	private SpeechListener uploadListener;
+	
+	public interface SpeakFragmentNotify{
+		void SpeakFragmentDone(int status);
+	}
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,12 +102,20 @@ public class SpeakFragment extends Fragment {
 			public void onResults(ArrayList<RecognizerResult> results,
 					boolean isLast) {
 				String text = "";
-				for (int i = 0; i < results.size(); i++) {
+/*				for (int i = 0; i < results.size(); i++) {
 					RecognizerResult result = results.get(i);
 					text += result.text + " confidence=" + result.confidence
 							+ "\n";
+				}*/
+				
+				RecognizerResult result = results.get(0);
+				
+				mSpeakText.setText(result.text);
+				
+				if(result.text.compareTo("联通上网真快")==0 || result.text.compareTo("联通3G上网真快")==0){
+					mSpeakFragmentNotify.SpeakFragmentDone(0);
 				}
-				mSpeakText.setText(text);
+				
 				/*
 				 * EditText tmsg = (EditText)findViewById(R.id.edit_text);
 				 * tmsg.setText(text);
@@ -188,6 +203,8 @@ public class SpeakFragment extends Fragment {
 		try {
 			mActivity = (MscActivity) activity;
 			// onGotoPageListener = (OnGotoPageListener) activity;
+			mSpeakFragmentNotify = (SpeakFragmentNotify) activity;
+			
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnGotoPageListener");

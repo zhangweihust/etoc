@@ -1,20 +1,26 @@
 package com.zhangwei.speakloudly.fragment;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.Header;
+
 import com.zhangwei.speakloudly.R;
-import com.zhangwei.speakloudly.activity.MscActivity;
-import com.zhangwei.speakloudly.client.Callback;
 import com.zhangwei.speakloudly.client.ResponseWrapper;
 import com.zhangwei.speakloudly.client.UnicomClient;
 import com.zhangwei.speakloudly.client.ServerSideErrorMsg;
 import com.zhangwei.speakloudly.utils.RuntimeLog;
 
 import android.app.Activity;
+import android.content.Context;
 //import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,10 +30,20 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PhoneNumFragment extends Fragment {
-	MscActivity mActivity;
 
+	public static final int VERIFYING_PHONENUM = 4;
+	public static final int STOP_VFY_PHONENUM = 5;
+
+	public static final int TIMEOUT_DELAY = 60 * 1000;
+	public static final int RUNTIME_DELAY = 10000;
+
+	private Activity mActivity;
+	private MyHandler mHandler;
+	private PhoneNumFragmentNotify mPhoneNumFragmentNotify;
+	
 	// UI components
 	private EditText mEdit;
 	private TextView mError;
@@ -35,6 +51,10 @@ public class PhoneNumFragment extends Fragment {
 	private AnimationDrawable verifyingPhoneNumberAnimation;
 
 	public PhoneNumFragment() {
+	}
+	
+	public interface PhoneNumFragmentNotify{
+		void phoneNumfragmentDone(int status);
 	}
 
 	// Called once the Fragment has been created in order for it to
@@ -59,7 +79,9 @@ public class PhoneNumFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		RuntimeLog.log("PhoneNumFragment - onActivityCreated");
-/*		mNext.setOnClickListener(new OnClickListener() {});*/
+		/* mNext.setOnClickListener(new OnClickListener() {}); */
+
+		mHandler = new MyHandler(this);
 	}
 
 	@Override
@@ -69,72 +91,127 @@ public class PhoneNumFragment extends Fragment {
 		RuntimeLog.log("PhoneNumFragment - onAttach");
 
 		try {
-			mActivity = (MscActivity) activity;
+			mActivity = (Activity) activity;
 			// onGotoPageListener = (OnGotoPageListener) activity;
+			mPhoneNumFragmentNotify = (PhoneNumFragmentNotify) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnGotoPageListener");
 		}
 	}
+
+	public static class MyHandler extends Handler {
+
+		WeakReference<PhoneNumFragment> wFrag;
+
+		MyHandler(PhoneNumFragment frag) {
+			wFrag = new WeakReference<PhoneNumFragment>(frag);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			PhoneNumFragment theFrag = wFrag.get();
+
+			if (theFrag == null) {
+				RuntimeLog.log("handleMessage - theFrag null");
+				return;
+			}
+
+			// super.handleMessage(msg);
+			RuntimeLog.log("PhoneNumFragment handleMessage - msg.what:"
+					+ msg.what);
+			switch (msg.what) {
+			case VERIFYING_PHONENUM:
+				theFrag.LockInput();
+				break;
+			case STOP_VFY_PHONENUM:
+				if ((String) (msg.obj) == "error") {
+					theFrag.unLockInput("手机号校验错误");
+				} else {
+					theFrag.unLockInput("手机号校验超时");
+				}
+
+				break;
+			default:
+				RuntimeLog.log("case default - msg.what:" + msg.what);
+				break;
+			}
+
+		}
+	};
+
+	public class PaymentTask extends AsyncTask<String, Void, ResponseWrapper> {
+
+		@Override
+		protected ResponseWrapper doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			List<Header> headers = new ArrayList<Header>();
+			String phoneNum = params[0];
+
+			//give the phoneNum to server
+			final ResponseWrapper resp = UnicomClient.sendGetRequest(UnicomClient.VFY_PHONENUM_URL,
+					null, headers);
+			
+			return resp;
+		}
+		
+		@Override
+		protected void onPostExecute(ResponseWrapper result) {
+
+			//change UI according to the status
+			
+			
+			handleNetworkError(mActivity, result);
+			// if(resp!=null && resp.isValid() && resp.isNoError()){
+			if (true) {
+
+				mHandler.removeMessages(PhoneNumFragment.STOP_VFY_PHONENUM);
+				mPhoneNumFragmentNotify.phoneNumfragmentDone(0);//notify activity to do next
+				
+
+			} else {
+				if (result != null) {
+					String errMsg = ServerSideErrorMsg.getMsg(result
+							.getStatus());
+					if (errMsg != null) {
+						unLockInput(errMsg);
+					}
+				}
+				mHandler.removeMessages(PhoneNumFragment.STOP_VFY_PHONENUM);
+				Message msg = new Message();
+				msg.what = PhoneNumFragment.STOP_VFY_PHONENUM;
+				msg.obj = "error";
+				mHandler.sendMessageDelayed(msg,
+						PhoneNumFragment.RUNTIME_DELAY);
+				// unLockInput(null);
+			}
+		}
+
+		
+	}
 	
-	public void onNext(View view){
+	public void onNext(View view) {
 
 		// mSpeakText.setText(text);
 		String phoneNum = mEdit.getText().toString();
 		if (validateNumber(phoneNum)) {
 			// seems ok, then verify phone number through unicom server
-			mActivity.mHandler
-					.sendEmptyMessage(MscActivity.VERIFYING_PHONENUM);
+			mHandler.sendEmptyMessage(PhoneNumFragment.VERIFYING_PHONENUM);
 
 			// set the pull pin time out event
 			Message msg = new Message();
-			msg.what = MscActivity.STOP_VFY_PHONENUM;
+			msg.what = PhoneNumFragment.STOP_VFY_PHONENUM;
 			msg.obj = "timeout";
-			mActivity.mHandler.sendMessageDelayed(msg,
-					MscActivity.TIMEOUT_DELAY);
+			mHandler.sendMessageDelayed(msg, TIMEOUT_DELAY);
+			
+			PaymentTask task = new PaymentTask();
+			task.execute(phoneNum);
 
-			UnicomClient.performVerfiyNum(null, mActivity.mHandler,
-					new Callback() {
-						public void call(ResponseWrapper resp) {
-
-							mActivity.handleNetworkError(resp);
-							// if(resp!=null && resp.isValid() &&
-							// resp.isNoError()){
-							if (true) {
-
-								mActivity.mHandler
-										.removeMessages(MscActivity.STOP_VFY_PHONENUM);
-								mActivity.goToPage(
-										MscActivity.SPEAK_LOUDLY_VIEW,
-										true);
-
-							} else {
-								if (resp != null) {
-									String errMsg = ServerSideErrorMsg
-											.getMsg(resp.getStatus());
-									if (errMsg != null) {
-										unLockInput(errMsg);
-									}
-								}
-								mActivity.mHandler
-										.removeMessages(MscActivity.STOP_VFY_PHONENUM);
-								Message msg = new Message();
-								msg.what = MscActivity.STOP_VFY_PHONENUM;
-								msg.obj = "error";
-								mActivity.mHandler.sendMessageDelayed(
-										msg, MscActivity.RUNTIME_DELAY);
-								// unLockInput(null);
-							}
-
-						}
-					});
 
 		} else {
 			unLockInput(phoneNum + "不是一个正确的手机号码");
 		}
 
-	
-		
 	}
 
 	public void LockInput() {
@@ -179,6 +256,12 @@ public class PhoneNumFragment extends Fragment {
 			return false;
 		}
 		return true;
+	}
+
+	public void handleNetworkError(Context c, ResponseWrapper resp) {
+		if (resp == null) {
+			Toast.makeText(c, "Network Problem!", Toast.LENGTH_LONG).show();
+		}
 	}
 
 }

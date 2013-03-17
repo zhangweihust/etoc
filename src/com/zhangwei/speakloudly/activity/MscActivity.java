@@ -32,17 +32,19 @@ import android.widget.Toast;
 import com.zhangwei.speakloudly.R;
 import com.zhangwei.speakloudly.client.ResponseWrapper;
 import com.zhangwei.speakloudly.fragment.PhoneNumFragment;
+import com.zhangwei.speakloudly.fragment.PhoneNumFragment.PhoneNumFragmentNotify;
 import com.zhangwei.speakloudly.fragment.SpeakFragment;
+import com.zhangwei.speakloudly.fragment.SpeakFragment.SpeakFragmentNotify;
 import com.zhangwei.speakloudly.utils.RuntimeLog;
 
 /**
  * @author zhangwei
  */
-public class MscActivity extends FragmentActivity {
+public class MscActivity extends FragmentActivity implements PhoneNumFragmentNotify, SpeakFragmentNotify {
 
 	// fragment types:
-	public final static int PHONE_NUM_VIEW = 0; // to welcome
-	public final static int SPEAK_LOUDLY_VIEW = 1; //
+	public final static int SPEAK_LOUDLY_VIEW = 0; // to welcome
+	public final static int PHONE_NUM_VIEW = 1; //
 
 	// handler status:
 	public static final int LOGINING_UNICOM = 0;
@@ -100,17 +102,6 @@ public class MscActivity extends FragmentActivity {
 					break;
 				case LOGINING_IFLY:
 					break;
-				case VERIFYING_PHONENUM:
-					theActivity.phoneFrag.LockInput();
-					break;
-				case STOP_VFY_PHONENUM:
-					if((String)(msg.obj)=="error"){
-						theActivity.phoneFrag.unLockInput("手机号校验错误");
-					}else{
-						theActivity.phoneFrag.unLockInput("手机号校验超时");
-					}
-					
-					break;
 				case PAYING_PHONENUM:
 					break;
 	            default:
@@ -133,7 +124,7 @@ public class MscActivity extends FragmentActivity {
 		
 		mHandler = new MyHandler(this);
 
-		goToPage(PHONE_NUM_VIEW, false);
+		goToPage(SPEAK_LOUDLY_VIEW, false);
 	}
 
 	public void goToPage(int type, boolean record) {
@@ -184,6 +175,16 @@ public class MscActivity extends FragmentActivity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	public 	void phoneNumfragmentDone(int status){
+		goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+	}
+	
+	@Override
+	public 	void SpeakFragmentDone(int status){
+		goToPage(MscActivity.PHONE_NUM_VIEW, true);
 	}
 	
 	public void onNext(View v){

@@ -10,7 +10,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity
-            android:name=".activity.MscActivity"
+            android:name="com.zhangwei.speakloudly.activity.MscActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|fontScale"
             android:label="@string/app_name" >
             <intent-filter>

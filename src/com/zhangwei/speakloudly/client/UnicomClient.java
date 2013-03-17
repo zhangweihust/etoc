@@ -36,7 +36,7 @@ import android.util.Log;
 
 public class UnicomClient {
 	private static final String UNICOM_URL = "http://www.unicom.example/";
-	private static final String VFY_PHONENUM_URL = UNICOM_URL + "verify";
+	public static final String VFY_PHONENUM_URL = UNICOM_URL + "verify";
 	private static final String PAY_PHONENUM_URL = UNICOM_URL + "payment";
 	private static final String TAG = "UnicomClient";
 
@@ -54,7 +54,7 @@ public class UnicomClient {
 		return t;
 	}
 
-	private static ResponseWrapper sendGetRequest(String url,
+	public static ResponseWrapper sendGetRequest(String url,
 			CookieStore reqCookieStore, List<Header> headers) {
 		Log.i(TAG, "sendGetRequest() begin url=" + url + ",reqCookieStore="
 				+ reqCookieStore);
@@ -168,7 +168,7 @@ public class UnicomClient {
 		return httpClient;
 	}
 
-	private static Header genPassportCookieHeader(String passport) {
+	public static Header genPassportCookieHeader(String passport) {
 		Header header = new BasicHeader("Cookie",
 				CookieUtil.crossCookieName("passport") + "=\"" + passport
 						+ "\"");
