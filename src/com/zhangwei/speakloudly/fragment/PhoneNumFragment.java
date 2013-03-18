@@ -82,6 +82,13 @@ public class PhoneNumFragment extends Fragment {
 		/* mNext.setOnClickListener(new OnClickListener() {}); */
 
 		mHandler = new MyHandler(this);
+
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		mEdit.setText("");
 	}
 
 	@Override
@@ -166,6 +173,7 @@ public class PhoneNumFragment extends Fragment {
 			if (true) {
 
 				mHandler.removeMessages(PhoneNumFragment.STOP_VFY_PHONENUM);
+				unLockInput(null);
 				mPhoneNumFragmentNotify.phoneNumfragmentDone(0);//notify activity to do next
 				
 

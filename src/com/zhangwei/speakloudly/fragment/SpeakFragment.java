@@ -68,6 +68,7 @@ public class SpeakFragment extends Fragment {
 
 		mToast = Toast.makeText(mActivity, "", Toast.LENGTH_LONG);
 		grammarText = readAbnfFile(mActivity);
+		mSpeakText.setText(R.string.instruction);
 
 		/**
 		 * 用户登录回调监听器.
@@ -81,11 +82,11 @@ public class SpeakFragment extends Fragment {
 			@Override
 			public void onEnd(SpeechError error) {
 				if (error != null) {
-					mToast.setText("登录失败");
-					mToast.show();
+					//mToast.setText("登录失败");
+					//mToast.show();
 				} else {
-					mToast.setText("登录成功");
-					mToast.show();
+					//mToast.setText("登录成功");
+					//mToast.show();
 				}
 			}
 
@@ -110,10 +111,12 @@ public class SpeakFragment extends Fragment {
 				
 				RecognizerResult result = results.get(0);
 				
-				mSpeakText.setText(result.text);
+				//mSpeakText.setText(result.text);
 				
-				if(result.text.compareTo("联通上网真快")==0 || result.text.compareTo("联通3G上网真快")==0){
+				if(result.text.compareTo("联通上网真快")==0 || result.text.compareTo("联通3G 上网真快")==0){
 					mSpeakFragmentNotify.SpeakFragmentDone(0);
+				}else{
+					mSpeakText.setText(R.string.instruction_error);
 				}
 				
 				/*
@@ -192,6 +195,12 @@ public class SpeakFragment extends Fragment {
 		SpeechUser.getUser().login(mActivity, null, null, "appid=" + APP_ID,
 				loginListener);
 
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		mSpeakText.setText(R.string.instruction);
 	}
 
 	@Override

@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.zhangwei.speakloudly.R;
 import com.zhangwei.speakloudly.client.ResponseWrapper;
+import com.zhangwei.speakloudly.fragment.PaymentFragment;
+import com.zhangwei.speakloudly.fragment.PaymentFragment.PaymentFragmentNotify;
 import com.zhangwei.speakloudly.fragment.PhoneNumFragment;
 import com.zhangwei.speakloudly.fragment.PhoneNumFragment.PhoneNumFragmentNotify;
 import com.zhangwei.speakloudly.fragment.SpeakFragment;
@@ -40,11 +42,13 @@ import com.zhangwei.speakloudly.utils.RuntimeLog;
 /**
  * @author zhangwei
  */
-public class MscActivity extends FragmentActivity implements PhoneNumFragmentNotify, SpeakFragmentNotify {
+public class MscActivity extends FragmentActivity 
+		implements PhoneNumFragmentNotify, SpeakFragmentNotify, PaymentFragmentNotify {
 
 	// fragment types:
 	public final static int SPEAK_LOUDLY_VIEW = 0; // to welcome
 	public final static int PHONE_NUM_VIEW = 1; //
+	public final static int PAYMENT_VIEW = 2; //
 
 	// handler status:
 	public static final int LOGINING_UNICOM = 0;
@@ -67,6 +71,7 @@ public class MscActivity extends FragmentActivity implements PhoneNumFragmentNot
 	private FragmentManager fm;
 	private SpeakFragment spkFrag;
 	private PhoneNumFragment phoneFrag;
+	private PaymentFragment paymentFrag;
 
 	public MyHandler mHandler;
 
@@ -120,6 +125,7 @@ public class MscActivity extends FragmentActivity implements PhoneNumFragmentNot
 
 		spkFrag = new SpeakFragment();
 		phoneFrag = new PhoneNumFragment();
+		paymentFrag = new PaymentFragment();
 		fm = getSupportFragmentManager();
 		
 		mHandler = new MyHandler(this);
@@ -141,7 +147,12 @@ public class MscActivity extends FragmentActivity implements PhoneNumFragmentNot
 			dst = spkFrag;
 			mViewName = "speakloudly";
 
-		} else {
+		} else if (type == PAYMENT_VIEW) {
+
+			dst = paymentFrag;
+			mViewName = "payment";
+
+	    }else {
 
 			dst = phoneFrag;
 			mViewName = "phoneNum";
@@ -179,12 +190,19 @@ public class MscActivity extends FragmentActivity implements PhoneNumFragmentNot
 	
 	@Override
 	public 	void phoneNumfragmentDone(int status){
-		goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+		goToPage(MscActivity.PAYMENT_VIEW, true);
 	}
 	
 	@Override
 	public 	void SpeakFragmentDone(int status){
 		goToPage(MscActivity.PHONE_NUM_VIEW, true);
+	}
+	
+	@Override
+	public void PaymentfragmentDone(int status) {
+		// TODO Auto-generated method stub
+		goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+		
 	}
 	
 	public void onNext(View v){
@@ -194,9 +212,18 @@ public class MscActivity extends FragmentActivity implements PhoneNumFragmentNot
 		
 	}
 	
+	public void onBack(View v){
+		if(paymentFrag!=null){
+			paymentFrag.onBack(v);
+		}
+		
+	}
+	
 	public void handleNetworkError(ResponseWrapper resp){
 		if(resp==null){
 			Toast.makeText(this,"Network Problem!", Toast.LENGTH_LONG).show();
 		}
 	}
+
+
 }
