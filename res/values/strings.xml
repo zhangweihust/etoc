@@ -10,6 +10,8 @@
 	</string-array>
 	<string name="instruction">凡联通3G用户都可在本终端上大声说“联通3G上网真快”，即可免费获赠20M流量，\n点击按钮然后大声说"</string>
 	<string name="instruction_error">对不起，没有听清，\n请重新点击按钮然后大声说“联通3G上网真快”"</string>
+	<string name="instruction_phonenum">恭喜您答对了！请您输入联通3G手机号码，点击下一步进行充值</string>
+	<string name="instruction_payment">您的手机号已充值成功，谢谢使用</string>
 	<string name="next">下一步</string>
 	<string name="back">返 回</string>
 	<string name="title">恭喜您答对了！</string>

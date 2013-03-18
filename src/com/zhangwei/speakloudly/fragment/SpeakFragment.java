@@ -44,6 +44,7 @@ public class SpeakFragment extends Fragment {
 	
 	public interface SpeakFragmentNotify{
 		void SpeakFragmentDone(int status);
+		void SpeakFragmentSpeak(int resID);
 	}
 
 
@@ -117,6 +118,7 @@ public class SpeakFragment extends Fragment {
 					mSpeakFragmentNotify.SpeakFragmentDone(0);
 				}else{
 					mSpeakText.setText(R.string.instruction_error);
+					mSpeakFragmentNotify.SpeakFragmentSpeak(R.string.instruction_error);
 				}
 				
 				/*

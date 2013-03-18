@@ -29,6 +29,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iflytek.speech.SpeechError;
+import com.iflytek.speech.SynthesizerPlayer;
+import com.iflytek.speech.SynthesizerPlayerListener;
 import com.zhangwei.speakloudly.R;
 import com.zhangwei.speakloudly.client.ResponseWrapper;
 import com.zhangwei.speakloudly.fragment.PaymentFragment;
@@ -65,6 +68,8 @@ public class MscActivity extends FragmentActivity
 	
 	public static final int TIMEOUT_DELAY = 60*1000;
 	public static final int RUNTIME_DELAY = 10000;
+	
+	private final String APP_ID = "512c57b1";
 
 	private Toast mToast;
 
@@ -73,7 +78,10 @@ public class MscActivity extends FragmentActivity
 	private PhoneNumFragment phoneFrag;
 	private PaymentFragment paymentFrag;
 
-	public MyHandler mHandler;
+	private MyHandler mHandler;
+	
+	private SynthesizerPlayer player;
+	private SynthesizerPlayerListener synbgListener;
 
 	/**
 	 * @author zhangwei This Handler class should be static or leaks might occur
@@ -129,8 +137,42 @@ public class MscActivity extends FragmentActivity
 		fm = getSupportFragmentManager();
 		
 		mHandler = new MyHandler(this);
-
+		player = SynthesizerPlayer.createSynthesizerPlayer(this, "appid=" + APP_ID);
+		synbgListener = new SynthesizerPlayerListener (){
+			@Override
+			public void onPlayBegin(){
+			// 播放开始回调，表示已获得第一块缓冲区音频开始播放
+			}
+			
+			@Override
+			public void onBufferPercent(int percent,int beginPos,int endPos){
+			// 缓冲回调，通知当前缓冲进度
+			}
+			
+			@Override
+			public void onPlayPaused(){
+			// 暂停通知，表示缓冲数据播放完成，后续的音频数据正在获取
+			}
+			
+			@Override
+			public void onPlayResumed(){
+			// 暂停通知后重新获取到后续音频，表示重新开始播放
+			}
+			
+			@Override
+			public void onPlayPercent(int percent,int beginPos,int endPos){
+			// 播放回调，通知当前播放进度
+			}
+			
+			@Override
+			public void onEnd(SpeechError error){
+			}
+		};
+		
+		
+		
 		goToPage(SPEAK_LOUDLY_VIEW, false);
+		speak(R.string.instruction);
 	}
 
 	public void goToPage(int type, boolean record) {
@@ -190,18 +232,24 @@ public class MscActivity extends FragmentActivity
 	
 	@Override
 	public 	void phoneNumfragmentDone(int status){
+		speak(R.string.instruction_payment);
 		goToPage(MscActivity.PAYMENT_VIEW, true);
+
 	}
 	
 	@Override
 	public 	void SpeakFragmentDone(int status){
+		speak(R.string.instruction_phonenum);
 		goToPage(MscActivity.PHONE_NUM_VIEW, true);
+
 	}
 	
 	@Override
 	public void PaymentfragmentDone(int status) {
 		// TODO Auto-generated method stub
+		speak(R.string.instruction);
 		goToPage(MscActivity.SPEAK_LOUDLY_VIEW, true);
+
 		
 	}
 	
@@ -223,6 +271,18 @@ public class MscActivity extends FragmentActivity
 		if(resp==null){
 			Toast.makeText(this,"Network Problem!", Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	
+	public void speak(int ResID){
+		
+		player.setVoiceName("xiaoyan");
+		player.playText(getString(ResID), "tts_buffer_time=2000",  synbgListener);
+	}
+	
+	@Override
+	public void SpeakFragmentSpeak(int resID){
+		speak(resID);
 	}
 
 
