@@ -275,10 +275,12 @@ public class MscActivity extends FragmentActivity
 	
 	
 	public void speak(int ResID){
-		
+		player.cancel();
 		player.setVoiceName("xiaoyan");
 		player.playText(getString(ResID), "tts_buffer_time=2000",  synbgListener);
+		
 	}
+	
 	
 	@Override
 	public void SpeakFragmentSpeak(int resID){

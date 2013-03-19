@@ -8,13 +8,13 @@
     <TextView
         android:id="@+id/speak_text"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:maxLines="12"
-        android:minLines="12"
+        android:minLines="4"
         android:text="@string/title"
         android:textColor="@color/darkblue"
-        android:textSize="20sp" />
+        android:textSize="20sp" 
+        android:layout_marginTop="10dp"/>
 
     <Button
         android:id="@+id/btn_begin_recognize"
@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/speak_text"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dip"
+        android:layout_margin="10dip"
         android:layout_marginLeft="5dip"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:drawableTop="@drawable/mic_pic"
         android:drawablePadding="10dip"
         android:gravity="center"
