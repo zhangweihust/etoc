@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,10 +67,23 @@ public class SpeakFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		RuntimeLog.log("SpeakFragment - onActivityCreated");
+		
+		DisplayMetrics metric = new DisplayMetrics();
+		mActivity.getWindowManager().getDefaultDisplay().getMetrics(metric);
+		int width = metric.widthPixels;  // 屏幕宽度（像素）
+		int height = metric.heightPixels;  // 屏幕高度（像素）
+		float density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
+		int densityDpi = metric.densityDpi;  // 屏幕密度DPI（120 / 160 / 240）
+
 
 		mToast = Toast.makeText(mActivity, "", Toast.LENGTH_LONG);
 		grammarText = readAbnfFile(mActivity);
 		mSpeakText.setText(R.string.instruction);
+/*		String screenDisplay = "屏幕宽度（像素）" + width 
+				+ "\n屏幕高度（像素）" + height 
+				+ "\n屏幕密度（0.75 / 1.0 / 1.5）: " + density
+				+ "\n屏幕密度DPI（120 / 160 / 240）:" + densityDpi;
+		mSpeakText.setText(screenDisplay);*/
 
 		/**
 		 * 用户登录回调监听器.
